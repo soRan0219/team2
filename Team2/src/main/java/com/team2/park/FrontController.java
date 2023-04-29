@@ -9,12 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
+import com.team2.reservation.action.ReservationAction;
 
 @WebServlet("*.park")
 public class FrontController extends HttpServlet {
 
-	//http://localhost:8088/Team2/reservation/Main.park
+	//http://localhost:8088/Team2/Main.park
 	
 	protected void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("doProcess()");
@@ -36,6 +38,7 @@ public class FrontController extends HttpServlet {
 		System.out.println("가상주소 매핑 - 시작");
 		
 		ActionForward forward = null;
+		Action action = null;
 		
 		if(command.equals("/Main.park")) {
 			System.out.println("C: /Main.park 호출");
@@ -58,8 +61,16 @@ public class FrontController extends HttpServlet {
 		else if(command.equals("/ReservationAction.park")) {
 			System.out.println("C: /ReservationAction.park 호출");
 			
-			forward = new ActionForward();
+			action = new ReservationAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} //try
+			
 		} //if(ReservationAction)
+		
 		
 		System.out.println("가상주소 매핑 - 끝");
 		/************************* 가상주소 매핑 *****************************/
