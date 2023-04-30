@@ -3,11 +3,11 @@
 <!-- DB 연결에 필요한 연결정보 저장 -->
 <Context>
 	<Resource 
-	 name="jdbc/mvc7" 
+	 name="jdbc/team2" 
 	 auth="Container" 
 	 type="javax.sql.DataSource" 
 	 driverClassName="com.mysql.cj.jdbc.Driver" 
-	 url="jdbc:mysql://localhost:3306/jspdb" 
+	 url="jdbc:mysql://localhost:3306/team2" 
 	 username="root" 
 	 password="1234" 
 	 maxWait="5000"

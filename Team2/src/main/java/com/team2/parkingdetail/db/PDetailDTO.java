@@ -1,6 +1,6 @@
 package com.team2.parkingdetail.db;
 
-public class PDDTO {
+public class PDetailDTO {
 	private String parkingCode;
 	private int parkingPosition;
 	
