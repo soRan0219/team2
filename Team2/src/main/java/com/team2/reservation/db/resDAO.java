@@ -1,14 +1,19 @@
 package com.team2.reservation.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import com.team2.parking.db.ParkingDTO;
+import com.team2.parkingdetail.db.PDetailDTO;
 
 public class resDAO {
 	private Connection con = null;
@@ -63,11 +68,53 @@ public class resDAO {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			closeDB();
 		} //try
 		
 		return pDto;
 	} //getParking()
 	
+	//예약 가능한 자리 조회
+	public List<PDetailDTO> getAvailable(Date resDate, Time parkInTime, Time parkOutTime) {
+		List<PDetailDTO> available = new ArrayList<>();
+		
+		try {
+			con = getCon();
+			
+			sql = "SELECT p.parkingCode, p.parkingPosition "
+					+ " FROM parkingDetail p JOIN reservation r "
+					+ " ON p.parkingCode=r.parkingCode "
+					+ " AND p.parkingPosition=r.parkingPosition "
+					+ " WHERE r.parkOutTime<=? OR r.parkInTime>=? "
+					+ " AND resDate=?";
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setTime(1, parkInTime);
+			pstmt.setTime(2, parkOutTime);
+			pstmt.setDate(3, resDate);
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				PDetailDTO pdDto = new PDetailDTO();
+				
+				pdDto.setParkingCode(rs.getString(1));
+				pdDto.setParkingPosition(rs.getInt(2));
+				
+				available.add(pdDto);
+			} //while
+			
+			System.out.println("DAO: 예약 가능한 자리 조회 완료");
+			System.out.println(available.size());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		} //try
+		
+		return available;
+	} //getAvailable()
 	
 	
 	
