@@ -27,7 +27,7 @@ public class ReservationAction implements Action {
 		//희망 예약 날짜 
 		String dateString = request.getParameter("selectedDate");
 		Date resDate = Date.valueOf(LocalDate.parse(dateString));
-		request.setAttribute("selectedDate", resDate);
+		request.setAttribute("resDate", resDate);
 		
 		//희망 입,출차 시간 
 		String fromTime = request.getParameter("fromTime");
@@ -46,10 +46,14 @@ public class ReservationAction implements Action {
 		request.setAttribute("pDto", pDto);
 		
 		//예약 가능 주차 자리 조회
-//		ResDTO rDto = new ResDTO();
 //		PDetailDTO pdDto = new PDetailDTO();
+		ResDTO rDto = new ResDTO();
+		rDto.setParkingCode(parkingCode);
+		rDto.setParkInTime(parkInTime);
+		rDto.setParkOutTime(parkOutTime);
+		rDto.setResDate(resDate);
 		
-		List<PDetailDTO> available = dao.getAvailable(resDate, parkInTime, parkOutTime);
+		List<PDetailDTO> available = dao.getAvailable(rDto);
 		request.setAttribute("available", available);
 		
 		ActionForward forward = new ActionForward();

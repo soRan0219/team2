@@ -40,17 +40,23 @@
 			startTime:'00:00',
 			defaultTime:'12:00',
 			dynamic:false,
-			scrollbar:true
+			scrollbar:true,
+			change:function(time) {
+				console.log(time);
+// 				$('#toTime').timepicker({startTime:time});
+			}
 		});
 
 		$('#toTime').timepicker({
 			timeFormat:'H:mm',
 			interval:30,
 			startTime:'00:00',
+// 			startTime:$('#fromTime').val(),
 			dynamic:false,
-			scrollbar:true,
-			minTime:$('#fromTime').val()
+			scrollbar:true
+// 			minTime:$('#fromTime').val()
 		});
+		
 		
 	});
 	
@@ -61,16 +67,19 @@
 	
 	<div>
 		<form action="./ReservationAction.park" name="fr" method="post">
-			<select name="parking">
-			 <option value="A"> 주차장1 </option>
-			 <option value="B"> 주차장2 </option>
-			 <option value="C"> 주차장3 </option>
-			</select>
-			
-			<input type="text" id="datepicker" name="selectedDate">
-			<input type="text" id="fromTime" name="fromTime">
-			<input type="text" id="toTime" name="toTime">
-			<input type="submit" value="예약하기">
+			<div>
+				<select name="parking">
+				 <option value="A"> 주차장1 </option>
+				 <option value="B"> 주차장2 </option>
+				 <option value="C"> 주차장3 </option>
+				</select>
+			</div>
+			<div>
+				<input type="text" id="datepicker" name="selectedDate">
+				<input type="text" id="fromTime" name="fromTime">
+				<input type="text" id="toTime" name="toTime">
+				<input type="submit" value="예약하기">
+			</div>
 		</form>
 	</div>
 	

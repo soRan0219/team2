@@ -76,7 +76,7 @@ public class resDAO {
 	} //getParking()
 	
 	//예약 가능한 자리 조회
-	public List<PDetailDTO> getAvailable(Date resDate, Time parkInTime, Time parkOutTime) {
+	public List<PDetailDTO> getAvailable(ResDTO rDto) {
 		List<PDetailDTO> available = new ArrayList<>();
 		
 		try {
@@ -87,12 +87,14 @@ public class resDAO {
 					+ " ON p.parkingCode=r.parkingCode "
 					+ " AND p.parkingPosition=r.parkingPosition "
 					+ " WHERE r.parkOutTime<=? OR r.parkInTime>=? "
-					+ " AND resDate=?";
+					+ " AND resDate=?"
+					+ " AND p.parkingCode=?";
 			pstmt = con.prepareStatement(sql);
 			
-			pstmt.setTime(1, parkInTime);
-			pstmt.setTime(2, parkOutTime);
-			pstmt.setDate(3, resDate);
+			pstmt.setTime(1, rDto.getParkInTime());
+			pstmt.setTime(2, rDto.getParkOutTime());
+			pstmt.setDate(3, rDto.getResDate());
+			pstmt.setString(4, rDto.getParkingCode());
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
