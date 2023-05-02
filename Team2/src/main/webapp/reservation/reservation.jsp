@@ -66,19 +66,24 @@
 			});
 		}); //pArea
 		
-		$('#dateTime').click(function() {
+		$('#dateTimeBtn').click(function() {
 			let selectedDate = $('#datepicker').datepicker('getDate');
 			let fromTime = $('#fromTime').timepicker('getTime');
 			let toTime = $('#toTime').timepicker('getTime');
+			let parkingCode = $('#parkingCode').val();
 			
 			$.ajax({
 				url:"./Available.park",
-				data:{date:selectedDate,fromTime:fromTime,toTime:toTime},
+				data:{date:selectedDate,fromTime:fromTime,toTime:toTime,parkingCode:parkingCode},
 				success:function(result) {
-					
+					alert("sucess");
+					console.log(result);
+				},
+				error:function() {
+					alert("error");
 				}
-			});
-		});
+			}); //ajax
+		}); //dateTimeBtn
 		
 		
 	});
@@ -100,14 +105,15 @@
 	희망 출차 시간: ${parkOutTime } <br>
 	
 		<div>
-		<form action="" name="fr" method="post">
+<!-- 		<form action="" name="fr" method="post"> -->
 			<div>
+				<input type="hidden" id="parkingCode" value="${pDto.parkingCode }" >
 				<input type="text" id="datepicker" name="selectedDate">
 				<input type="text" id="fromTime" name="fromTime">
 				<input type="text" id="toTime" name="toTime">
-				<input type="button" value="조회하기" id="dateTime">
+				<input type="button" value="조회하기" id="dateTimeBtn">
 			</div>
-		</form>
+<!-- 		</form> -->
 	</div>
 	
 	<hr>

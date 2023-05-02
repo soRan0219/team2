@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
 import com.team2.reservation.action.AreaInfoAction;
+import com.team2.reservation.action.AvailableAction;
 import com.team2.reservation.action.ReservationAction;
 
 @WebServlet("*.park")
@@ -91,7 +92,13 @@ public class FrontController extends HttpServlet {
 			System.out.println("C: /Available.park 호출");
 			
 			//AvailableAction()
+			action = new AvailableAction();
 			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} //try
 			
 		} //if(Available)
 		

@@ -57,6 +57,7 @@ public class ResDAO {
 			
 			if(rs.next()) {
 				//주차장 DB에 있음
+				pDto.setParkingCode(parkingCode);
 				pDto.setInOutDoor(rs.getString("inOutDoor"));
 				pDto.setParkingAdr(rs.getString("parkingAdr"));
 				pDto.setParkingName(rs.getString("parkingName"));
