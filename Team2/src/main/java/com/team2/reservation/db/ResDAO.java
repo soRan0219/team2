@@ -1,10 +1,8 @@
 package com.team2.reservation.db;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,18 +10,21 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.json.simple.JSONArray;
+
 import com.team2.parking.db.ParkingDTO;
 import com.team2.parkingdetail.db.PDetailDTO;
 
-public class resDAO {
+public class ResDAO {
 	private Connection con = null;
 	private PreparedStatement pstmt = null;
 	private String sql = "";
 	private ResultSet rs = null;
+	private JSONArray jsonArray = null;
 	
 	public Connection getCon() throws Exception {
 		Context initCTX = new InitialContext();
-		DataSource ds = (DataSource)initCTX.lookup("java:comp/env/jdbc/team2");
+		DataSource ds = (DataSource)initCTX.lookup("java:comp/env/jdbc/class7_230118_team2");
 		con = ds.getConnection();
 		
 		System.out.println("DAO: DB 연결 성공 " + con);
@@ -117,6 +118,23 @@ public class resDAO {
 		
 		return available;
 	} //getAvailable()
+	
+	public JSONArray getAreaInfo(String parkingCode, String parkingPosition) {
+		jsonArray = new JSONArray();
+		
+		try {
+			con = getCon();
+			
+			sql = "";
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		
+		return jsonArray;
+	} //getAreaInfo()
 	
 	
 	

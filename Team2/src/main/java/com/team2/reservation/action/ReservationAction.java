@@ -14,7 +14,7 @@ import com.team2.commons.ActionForward;
 import com.team2.parking.db.ParkingDTO;
 import com.team2.parkingdetail.db.PDetailDTO;
 import com.team2.reservation.db.ResDTO;
-import com.team2.reservation.db.resDAO;
+import com.team2.reservation.db.ResDAO;
 
 public class ReservationAction implements Action {
 
@@ -41,7 +41,7 @@ public class ReservationAction implements Action {
 		String parkingCode = request.getParameter("parking");
 		System.out.println("parkingCode = " + parkingCode);
 		
-		resDAO dao = new resDAO();
+		ResDAO dao = new ResDAO();
 		ParkingDTO pDto = dao.getParking(parkingCode);
 		request.setAttribute("pDto", pDto);
 		

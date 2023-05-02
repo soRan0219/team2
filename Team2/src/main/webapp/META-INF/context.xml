@@ -3,12 +3,12 @@
 <!-- DB 연결에 필요한 연결정보 저장 -->
 <Context>
 	<Resource 
-	 name="jdbc/team2" 
+	 name="jdbc/class7_230118_team2" 
 	 auth="Container" 
 	 type="javax.sql.DataSource" 
 	 driverClassName="com.mysql.cj.jdbc.Driver" 
-	 url="jdbc:mysql://localhost:3306/team2" 
-	 username="root" 
+	 url="jdbc:mysql://db.itwillbs.dev:3306/class7_230118_team2" 
+	 username="class7_230118_team2" 
 	 password="1234" 
 	 maxWait="5000"
 	/>

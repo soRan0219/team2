@@ -58,6 +58,28 @@
 // 			minTime:$('#fromTime').val()
 		});
 		
+		$('#pArea').find('a').each(function() {
+// 			alert("클릭");
+// 			alert($(this).text());
+			$(this).click(function() {
+				$('#selectedArea').html($(this).text());
+			});
+		}); //pArea
+		
+		$('#dateTime').click(function() {
+			let selectedDate = $('#datepicker').datepicker('getDate');
+			let fromTime = $('#fromTime').timepicker('getTime');
+			let toTime = $('#toTime').timepicker('getTime');
+			
+			$.ajax({
+				url:"./Available.park",
+				data:{date:selectedDate,fromTime:fromTime,toTime:toTime},
+				success:function(result) {
+					
+				}
+			});
+		});
+		
 		
 	});
 	
@@ -83,7 +105,7 @@
 				<input type="text" id="datepicker" name="selectedDate">
 				<input type="text" id="fromTime" name="fromTime">
 				<input type="text" id="toTime" name="toTime">
-				<input type="button" value="조회하기">
+				<input type="button" value="조회하기" id="dateTime">
 			</div>
 		</form>
 	</div>
@@ -91,11 +113,43 @@
 	<hr>
 	<div>
 		<c:forEach var="a" items="${available }">
-			${a.parkingCode } 
-			${a.parkingPosition } <br>
+			이용 가능한 자리: 
+			${a.parkingCode}
+			${a.parkingPosition }
 		</c:forEach>
 	</div>
 	<hr>
+	
+	<div id="pArea">
+	주차장 좌석 배치
+		<table>
+			<tr>
+				<td><a id="a1" href="#">A1</a></td>
+				<td><a id="a2" href="#">A2</a></td>
+				<td><a id="a3" href="#">A3</a></td>
+				<td><a id="a4" href="#">A4</a></td>
+				<td><a id="a5" href="#">A5</a></td>
+			</tr>
+		</table>
+	</div>
+	
+	<div id="selectedArea">
+		selected
+	</div>
+	
+	<hr>
+	
+	<div id="payInfo">
+		<form action="./PayAction.park" method="post">
+			연락처: <input type="text" id="tel">
+			차량번호: <input type="text" id="carNo">
+			사용 포인트: <input type="text" id="usePoint">
+			<div>
+				<h3> 결제 예상금액: <input type="text" id="price" value="" readonly></h3>
+				<input type="submit" value="결제하기">
+			</div>
+		</form>
+	</div>
 	
 </body>
 </html>
