@@ -2,9 +2,12 @@ package com.team2.reservation.action;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +20,19 @@ import com.team2.reservation.db.ResDTO;
 import com.team2.reservation.db.ResDAO;
 
 public class ReservationAction implements Action {
+	
+	public Time stringToTime(String time) {
+		Time parsedTime = null;
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("H:mm", Locale.ENGLISH);
+			java.util.Date parsedDate = dateFormat.parse(time);
+			parsedTime = new Time(parsedDate.getTime());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return parsedTime;
+	} //stringToTime()
 
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -32,8 +48,9 @@ public class ReservationAction implements Action {
 		//희망 입,출차 시간 
 		String fromTime = request.getParameter("fromTime");
 		String toTime = request.getParameter("toTime");
-		Time parkInTime = Time.valueOf(LocalTime.parse(fromTime));
-		Time parkOutTime = Time.valueOf(LocalTime.parse(toTime));
+		Time parkInTime = stringToTime(fromTime);
+		Time parkOutTime = stringToTime(toTime);
+		
 		request.setAttribute("parkInTime", parkInTime);
 		request.setAttribute("parkOutTime", parkOutTime);
 		
@@ -46,7 +63,6 @@ public class ReservationAction implements Action {
 		request.setAttribute("pDto", pDto);
 		
 		//예약 가능 주차 자리 조회
-//		PDetailDTO pdDto = new PDetailDTO();
 		ResDTO rDto = new ResDTO();
 		rDto.setParkingCode(parkingCode);
 		rDto.setParkInTime(parkInTime);

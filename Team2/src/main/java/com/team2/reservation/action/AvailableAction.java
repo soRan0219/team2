@@ -70,17 +70,26 @@ public class AvailableAction implements Action {
 		rDto.setResDate(resDate);
 		
 		ResDAO dao = new ResDAO();
+		
+		int price = dao.getPrice(parkInTime, parkOutTime);
+		System.out.println("price: " + price);
 		List<PDetailDTO> aList = dao.getAvailable(rDto);
 		
 		JSONArray jArr = new JSONArray();
 		
 		Iterator it = aList.iterator();
-		for(int i=0; i<aList.size(); i++) {
-			JSONObject jobj = new JSONObject();
-			jobj.put("parkingCode", aList.get(i).getParkingCode());
-			jobj.put("parkingPosition", aList.get(i).getParkingPosition());
-			jArr.add(jobj);
+		if(it.hasNext()) {
+			for(int i=0; i<aList.size(); i++) {
+				JSONObject jobj = new JSONObject();
+				jobj.put("parkingCode", aList.get(i).getParkingCode());
+				jobj.put("parkingPosition", aList.get(i).getParkingPosition());
+				jArr.add(jobj);
+			}
 		}
+		JSONObject jobj = new JSONObject();
+		jobj.put("price", price);
+		jArr.add(jobj);
+		
 		System.out.println(jArr.size());
 		
 		response.setContentType("application/x-json; charset=utf-8");

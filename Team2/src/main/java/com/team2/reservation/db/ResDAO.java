@@ -3,6 +3,7 @@ package com.team2.reservation.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,15 +92,21 @@ public class ResDAO {
 					+ " (SELECT parkingPosition "
 					+ " FROM reservation "
 					+ " WHERE parkingCode=? "
-					+ " AND parkInTime>=? AND parkOutTime<=? "
-					+ " AND resDate=? )";
+					+ " AND resDate=?"
+					+ " AND (( parkInTime>? AND parkInTime<? ) "
+					+ " OR (parkOutTime>? AND parkOutTime<?) "
+					+ " ))";
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, rDto.getParkingCode());
 			pstmt.setString(2, rDto.getParkingCode());
-			pstmt.setTime(3, rDto.getParkInTime());
-			pstmt.setTime(4, rDto.getParkOutTime());
-			pstmt.setDate(5, rDto.getResDate());
+			pstmt.setDate(3, rDto.getResDate());
+			
+			
+			pstmt.setTime(4, rDto.getParkInTime());
+			pstmt.setTime(5, rDto.getParkOutTime());
+			pstmt.setTime(6, rDto.getParkInTime());
+			pstmt.setTime(7, rDto.getParkOutTime());
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -123,22 +130,34 @@ public class ResDAO {
 		return available;
 	} //getAvailable()
 	
-	public JSONArray getAreaInfo(String parkingCode, String parkingPosition) {
-		jsonArray = new JSONArray();
+	//이용시간에 따른 예상금액
+	public int getPrice(Time parkInTime, Time parkOutTime) {
+		int result = 0;
 		
 		try {
 			con = getCon();
 			
-			sql = "";
+			sql = "SELECT "
+					+ " (time_to_sec(timediff(?,?))/(30*60))*1000";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setTime(1, parkOutTime);
+			pstmt.setTime(2, parkInTime);
 			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+			System.out.println("DAO: 예상 결제 금액 - " + result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			closeDB();
 		}
 		
-		return jsonArray;
-	} //getAreaInfo()
+		return result;
+	} //getPrice()
 	
 	
 	

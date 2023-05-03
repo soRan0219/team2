@@ -78,15 +78,20 @@
 				data:{date:selectedDate,fromTime:fromTime,toTime:toTime,parkingCode:parkingCode},
 				success:function(data) {
 // 					alert("sucess");
-// 					console.log(data);
+					console.log(data);
 // 					console.log(JSON.stringify(data));
-					console.log(data[0].parkingCode);
-					console.log(data[0].parkingPosition);
-					for(var i=0; i<data.length; i++) {
-						$('#pCode').append(data[i].parkingCode);
-						$('#pPosition').append(data[i].parkingPosition);
+					var i;
+// 					for(i=0; i<data.length; i++) {
+// 						$('#pCodePosition').append(data[i].parkingCode).append(data[i].parkingPosition);
+// 					}
+					
+					for(i=0; i<data.length-1; i++) {
+// 						$('#available').find('table').append("<tr><td>"+data[i].parkingCode+"</td><td>"+data[i].parkingPosition+"</td></tr>");
+						$('#available').find('table').html("<tr><td>"+data[i].parkingCode+"</td><td>"+data[i].parkingPosition+"</td></tr>");
 					}
 					
+					
+					$('#price').attr('value',data[i-1].price);
 				},
 				error:function() {
 					alert("error");
@@ -126,19 +131,25 @@
 	</div>
 	
 	<hr>
-	<div>
-<%-- 		<c:set var="avail" value="${available }"/> --%>
+	<div id="available">
 		이용 가능한 자리:
-		<c:forEach var="a" items="${available }">
-			${a.parkingCode}
-			${a.parkingPosition }
-		</c:forEach>
+<%-- 		  <c:forEach var="a" items="${available }"> --%>
+<%-- 			${a.parkingCode} --%>
+<%-- 			${a.parkingPosition } --%>
+<%-- 		  </c:forEach> --%>
+		<table>
+		  <c:forEach var="a" items="${available }">
+		   <tr>
+			<td> ${a.parkingCode} </td>
+			<td> ${a.parkingPosition } </td>
+		   </tr>
+		  </c:forEach>
+		</table>
 	</div>
 	
 	<div>
 		재조회:
-		<div id="pCode"> </div>
-		<div id="pPosition"> </div>
+		<span id="pCodePosition"> </span>
 	</div>
 	
 	<hr>
