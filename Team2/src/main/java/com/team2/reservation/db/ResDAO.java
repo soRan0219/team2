@@ -84,19 +84,22 @@ public class ResDAO {
 		try {
 			con = getCon();
 			
-			sql = "SELECT p.parkingCode, p.parkingPosition "
-					+ " FROM parkingDetail p JOIN reservation r "
-					+ " ON p.parkingCode=r.parkingCode "
-					+ " AND p.parkingPosition=r.parkingPosition "
-					+ " WHERE r.parkOutTime<=? OR r.parkInTime>=? "
-					+ " AND resDate=?"
-					+ " AND p.parkingCode=?";
+			sql = "SELECT parkingCode, parkingPosition "
+					+ " FROM parkingDetail "
+					+ " WHERE parkingCode=? "
+					+ " AND parkingPosition NOT IN "
+					+ " (SELECT parkingPosition "
+					+ " FROM reservation "
+					+ " WHERE parkingCode=? "
+					+ " AND parkInTime>=? AND parkOutTime<=? "
+					+ " AND resDate=? )";
 			pstmt = con.prepareStatement(sql);
 			
-			pstmt.setTime(1, rDto.getParkInTime());
-			pstmt.setTime(2, rDto.getParkOutTime());
-			pstmt.setDate(3, rDto.getResDate());
-			pstmt.setString(4, rDto.getParkingCode());
+			pstmt.setString(1, rDto.getParkingCode());
+			pstmt.setString(2, rDto.getParkingCode());
+			pstmt.setTime(3, rDto.getParkInTime());
+			pstmt.setTime(4, rDto.getParkOutTime());
+			pstmt.setDate(5, rDto.getResDate());
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {

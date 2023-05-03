@@ -74,10 +74,19 @@
 			
 			$.ajax({
 				url:"./Available.park",
+				type:"post",
 				data:{date:selectedDate,fromTime:fromTime,toTime:toTime,parkingCode:parkingCode},
-				success:function(result) {
-					alert("sucess");
-					console.log(result);
+				success:function(data) {
+// 					alert("sucess");
+// 					console.log(data);
+// 					console.log(JSON.stringify(data));
+					console.log(data[0].parkingCode);
+					console.log(data[0].parkingPosition);
+					for(var i=0; i<data.length; i++) {
+						$('#pCode').append(data[i].parkingCode);
+						$('#pPosition').append(data[i].parkingPosition);
+					}
+					
 				},
 				error:function() {
 					alert("error");
@@ -118,12 +127,20 @@
 	
 	<hr>
 	<div>
+<%-- 		<c:set var="avail" value="${available }"/> --%>
+		이용 가능한 자리:
 		<c:forEach var="a" items="${available }">
-			이용 가능한 자리: 
 			${a.parkingCode}
 			${a.parkingPosition }
 		</c:forEach>
 	</div>
+	
+	<div>
+		재조회:
+		<div id="pCode"> </div>
+		<div id="pPosition"> </div>
+	</div>
+	
 	<hr>
 	
 	<div id="pArea">

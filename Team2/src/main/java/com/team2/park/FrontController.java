@@ -91,6 +91,28 @@ public class FrontController extends HttpServlet {
 		else if(command.equals("/Available.park")) {
 			System.out.println("C: /Available.park 호출");
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/////////////////////////////////////////////////
+			
+			
 			//AvailableAction()
 			action = new AvailableAction();
 			
@@ -99,6 +121,10 @@ public class FrontController extends HttpServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} //try
+			
+			
+			
+			/////////////////////////////////////////////////
 			
 		} //if(Available)
 		

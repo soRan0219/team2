@@ -4,11 +4,15 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
@@ -36,9 +40,11 @@ public class AvailableAction implements Action {
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		System.out.println("M: AvailableAction_execute()");
 		
+		request.setCharacterEncoding("utf-8");
+		
 		//희망 예약 날짜 
 		String dateString = request.getParameter("date");
-		System.out.println(dateString);
+//		System.out.println(dateString);
 		
 		SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z",Locale.ENGLISH);
 		Date parsedDate = dateFormat.parse(dateString);
@@ -55,7 +61,7 @@ public class AvailableAction implements Action {
 		
 		//주차장 잔여 자리 정보 조회
 		String parkingCode = request.getParameter("parkingCode");
-		System.out.println("parkingCode = " + parkingCode);
+//		System.out.println("parkingCode = " + parkingCode);
 		
 		ResDTO rDto = new ResDTO();
 		rDto.setParkingCode(parkingCode);
@@ -64,11 +70,21 @@ public class AvailableAction implements Action {
 		rDto.setResDate(resDate);
 		
 		ResDAO dao = new ResDAO();
-		List<PDetailDTO> available = dao.getAvailable(rDto);
-		request.setAttribute("available", available);
+		List<PDetailDTO> aList = dao.getAvailable(rDto);
 		
+		JSONArray jArr = new JSONArray();
 		
+		Iterator it = aList.iterator();
+		for(int i=0; i<aList.size(); i++) {
+			JSONObject jobj = new JSONObject();
+			jobj.put("parkingCode", aList.get(i).getParkingCode());
+			jobj.put("parkingPosition", aList.get(i).getParkingPosition());
+			jArr.add(jobj);
+		}
+		System.out.println(jArr.size());
 		
+		response.setContentType("application/x-json; charset=utf-8");
+		response.getWriter().print(jArr);
 		
 		return null;
 	} //execute()
