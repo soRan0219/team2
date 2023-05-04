@@ -5,7 +5,6 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 
@@ -16,8 +15,8 @@ import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
 import com.team2.parking.db.ParkingDTO;
 import com.team2.parkingdetail.db.PDetailDTO;
-import com.team2.reservation.db.ResDTO;
 import com.team2.reservation.db.ResDAO;
+import com.team2.reservation.db.ResDTO;
 
 public class ReservationAction implements Action {
 	
@@ -62,6 +61,10 @@ public class ReservationAction implements Action {
 		ParkingDTO pDto = dao.getParking(parkingCode);
 		request.setAttribute("pDto", pDto);
 		
+		//해당 주차장 모든 자리
+		List<PDetailDTO> allList = dao.getAllParkingDetail(parkingCode);
+		request.setAttribute("allList", allList);
+		
 		//예약 가능 주차 자리 조회
 		ResDTO rDto = new ResDTO();
 		rDto.setParkingCode(parkingCode);
@@ -71,6 +74,10 @@ public class ReservationAction implements Action {
 		
 		List<PDetailDTO> available = dao.getAvailable(rDto);
 		request.setAttribute("available", available);
+		
+		//결제 예상금액
+		int price = dao.getPrice(parkInTime, parkOutTime);
+		request.setAttribute("price", price);
 		
 		ActionForward forward = new ActionForward();
 		forward.setPath("./reservation/reservation.jsp");

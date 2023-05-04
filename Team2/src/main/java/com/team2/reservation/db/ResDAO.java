@@ -50,7 +50,7 @@ public class ResDAO {
 		try {
 			con = getCon();
 			
-			sql = "SELECT parkingName,parkingAdr,inOutDoor FROM parking WHERE parkingCode=?";
+			sql = "SELECT parkingName,parkingAdr,inOutDoor,parkingTel FROM parking WHERE parkingCode=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, parkingCode);
 			
@@ -62,6 +62,7 @@ public class ResDAO {
 				pDto.setInOutDoor(rs.getString("inOutDoor"));
 				pDto.setParkingAdr(rs.getString("parkingAdr"));
 				pDto.setParkingName(rs.getString("parkingName"));
+				pDto.setParkingTel(rs.getString("parkingTel"));
 				
 				System.out.println("DAO: 주차장 정보 저장 완료");
 			} else {
@@ -77,6 +78,31 @@ public class ResDAO {
 		
 		return pDto;
 	} //getParking()
+	
+	//주차장 모든 자리
+	public List<PDetailDTO> getAllParkingDetail(String ParkingCode) {
+		List<PDetailDTO> allList = new ArrayList<>(); 
+		
+		try {
+			con = getCon();
+			
+			sql = "SELECT * FROM parkingDetail WHERE parkingCode=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, ParkingCode);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PDetailDTO pDto = new PDetailDTO();
+				pDto.setParkingCode(ParkingCode);
+				pDto.setParkingPosition(rs.getInt("parkingPosition"));
+				allList.add(pDto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} //try
+		
+		return allList;
+	} //getAllParkingDetail
 	
 	//예약 가능한 자리 조회
 	public List<PDetailDTO> getAvailable(ResDTO rDto) {

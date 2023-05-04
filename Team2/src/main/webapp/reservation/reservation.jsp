@@ -58,7 +58,7 @@
 // 			minTime:$('#fromTime').val()
 		});
 		
-		$('#pArea').find('a').each(function() {
+		$('#pArea').find('td').each(function() {
 // 			alert("클릭");
 // 			alert($(this).text());
 			$(this).click(function() {
@@ -80,22 +80,49 @@
 // 					alert("sucess");
 					console.log(data);
 // 					console.log(JSON.stringify(data));
+					
 					var i;
 // 					for(i=0; i<data.length; i++) {
 // 						$('#pCodePosition').append(data[i].parkingCode).append(data[i].parkingPosition);
 // 					}
-					
 					for(i=0; i<data.length-1; i++) {
-// 						$('#available').find('table').append("<tr><td>"+data[i].parkingCode+"</td><td>"+data[i].parkingPosition+"</td></tr>");
-						$('#available').find('table').html("<tr><td>"+data[i].parkingCode+"</td><td>"+data[i].parkingPosition+"</td></tr>");
-					}
+						let tmp = "<tr>";
+						tmp += "<td>" + data[i].parkingCode + "</td>";
+						tmp += "<td>" + data[i].parkingPosition + "</td>";
+						tmp += "</tr>";
+						
+						if(i==0) {
+							$('#available').find('table').html(tmp);
+						} else {
+							$('#available').find('table').append(tmp);
+						} //if-else
+							
+							
+						let park = data[i].parkingCode + data[i].parkingPosition;	
+						$('#pArea').find('td').each(function() {
+// 							$(this).click(function() {
+// 								$('#selectedArea').html($(this).text());
+// 							});
+							if( $(this).text()==park ) {
+// 								$(this).html("<tr><td><a>"+park+"</a></td></tr>");
+								$(this).html(function(idx, txt) {
+									return "<a href='#'>" + txt + "</a>";
+								});
+// 								$('#pAreaTable').append("<tr><td><a>"+park+"</a></td></tr>");
+							}
+						}); //pArea
+						
+						
+						
+					} //for
+					
+					$('#price').attr('value',data[i].price);
 					
 					
-					$('#price').attr('value',data[i-1].price);
-				},
+				},  //success
 				error:function() {
 					alert("error");
-				}
+				}  //error
 			}); //ajax
 		}); //dateTimeBtn
 		
@@ -112,6 +139,7 @@
 		<p> ${pDto.inOutDoor } </p>
 		<hr>
 		주차장 주소: ${pDto.parkingAdr } <br>
+		주차장 연락처: ${pDto.parkingTel } <br>
 	</div>
 	
 	희망 예약 날짜: ${resDate } <br>
@@ -133,10 +161,6 @@
 	<hr>
 	<div id="available">
 		이용 가능한 자리:
-<%-- 		  <c:forEach var="a" items="${available }"> --%>
-<%-- 			${a.parkingCode} --%>
-<%-- 			${a.parkingPosition } --%>
-<%-- 		  </c:forEach> --%>
 		<table>
 		  <c:forEach var="a" items="${available }">
 		   <tr>
@@ -147,23 +171,20 @@
 		</table>
 	</div>
 	
-	<div>
-		재조회:
-		<span id="pCodePosition"> </span>
-	</div>
-	
 	<hr>
 	
 	<div id="pArea">
 	주차장 좌석 배치
-		<table>
-			<tr>
-				<td><a id="a1" href="#">A1</a></td>
-				<td><a id="a2" href="#">A2</a></td>
-				<td><a id="a3" href="#">A3</a></td>
-				<td><a id="a4" href="#">A4</a></td>
-				<td><a id="a5" href="#">A5</a></td>
-			</tr>
+		<table id="pAreaTable">
+			<c:forEach var="al" items="${allList }">
+			 <tr>
+				<td>${al.parkingCode }${al.parkingPosition }</td>
+<!-- 			<td><a id="a2" href="#">A2</a></td> -->
+<!-- 			<td><a id="a3" href="#">A3</a></td> -->
+<!-- 			<td><a id="a4" href="#">A4</a></td> -->
+<!-- 			<td><a id="a5" href="#">A5</a></td> -->
+			 </tr>
+			</c:forEach>
 		</table>
 	</div>
 	
@@ -175,11 +196,17 @@
 	
 	<div id="payInfo">
 		<form action="./PayAction.park" method="post">
+			<input type="hidden" id="id" value="${sessionScope.id }">
+			<input type="hidden" id="parkingCode" value="${available.parkingCode }">
+			<input type="hidden" id="parkingPosition" value="${available.parkingPosition }">
+			<!-- 예약날짜 -->
+			<!-- 입차시간 -->
+			<!-- 출차시간 -->
 			연락처: <input type="text" id="tel">
 			차량번호: <input type="text" id="carNo">
 			사용 포인트: <input type="text" id="usePoint">
 			<div>
-				<h3> 결제 예상금액: <input type="text" id="price" value="" readonly></h3>
+				<h3> 결제 예상금액: <input type="text" id="price" value="${price }" readonly></h3>
 				<input type="submit" value="결제하기">
 			</div>
 		</form>
