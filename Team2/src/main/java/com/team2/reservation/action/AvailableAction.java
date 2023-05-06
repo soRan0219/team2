@@ -11,14 +11,13 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.team2.admin.db.ResDTO;
 import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
 import com.team2.parkingdetail.db.PDetailDTO;
 import com.team2.reservation.db.ResDAO;
-import com.team2.reservation.db.ResDTO;
 
 public class AvailableAction implements Action {
 	
@@ -71,28 +70,30 @@ public class AvailableAction implements Action {
 		
 		ResDAO dao = new ResDAO();
 		
+		//결제 예상 금액
 		int price = dao.getPrice(parkInTime, parkOutTime);
 		System.out.println("price: " + price);
+		
 		List<PDetailDTO> aList = dao.getAvailable(rDto);
 		
-		JSONArray jArr = new JSONArray();
+		JsonArray jArr = new JsonArray();
 		
 		Iterator it = aList.iterator();
 		if(it.hasNext()) {
 			for(int i=0; i<aList.size(); i++) {
-				JSONObject jobj = new JSONObject();
-				jobj.put("parkingCode", aList.get(i).getParkingCode());
-				jobj.put("parkingPosition", aList.get(i).getParkingPosition());
+				JsonObject jobj = new JsonObject();
+				jobj.addProperty("parkingCode", aList.get(i).getParkingCode());
+				jobj.addProperty("parkingPosition", aList.get(i).getParkingPosition());
 				jArr.add(jobj);
 			}
 		}
-		JSONObject jobj = new JSONObject();
-		jobj.put("price", price);
+		JsonObject jobj = new JsonObject();
+		jobj.addProperty("price", price);
 		jArr.add(jobj);
 		
-		System.out.println(jArr.size());
+		System.out.println("예약가능 자리와 가격정보: " + jArr.size());
 		
-		response.setContentType("application/x-json; charset=utf-8");
+		response.setContentType("application/json; charset=utf-8");
 		response.getWriter().print(jArr);
 		
 		return null;

@@ -11,9 +11,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.json.simple.JSONArray;
-
-import com.team2.parking.db.ParkingDTO;
+import com.team2.admin.db.ParkingDTO;
+import com.team2.admin.db.ResDTO;
 import com.team2.parkingdetail.db.PDetailDTO;
 
 public class ResDAO {
@@ -21,7 +20,6 @@ public class ResDAO {
 	private PreparedStatement pstmt = null;
 	private String sql = "";
 	private ResultSet rs = null;
-	private JSONArray jsonArray = null;
 	
 	public Connection getCon() throws Exception {
 		Context initCTX = new InitialContext();
@@ -50,7 +48,7 @@ public class ResDAO {
 		try {
 			con = getCon();
 			
-			sql = "SELECT parkingName,parkingAdr,inOutDoor FROM parking WHERE parkingCode=?";
+			sql = "SELECT parkingName,parkingAdr,inOutDoor,parkingTel FROM parking WHERE parkingCode=?";
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, parkingCode);
 			
@@ -62,6 +60,7 @@ public class ResDAO {
 				pDto.setInOutDoor(rs.getString("inOutDoor"));
 				pDto.setParkingAdr(rs.getString("parkingAdr"));
 				pDto.setParkingName(rs.getString("parkingName"));
+				pDto.setParkingTel(rs.getString("parkingTel"));
 				
 				System.out.println("DAO: 주차장 정보 저장 완료");
 			} else {
@@ -77,6 +76,33 @@ public class ResDAO {
 		
 		return pDto;
 	} //getParking()
+	
+	//주차장 모든 자리
+	public List<PDetailDTO> getAllParkingDetail(String ParkingCode) {
+		List<PDetailDTO> allList = new ArrayList<>(); 
+		
+		try {
+			con = getCon();
+			
+			sql = "SELECT * FROM parkingDetail WHERE parkingCode=?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, ParkingCode);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				PDetailDTO pDto = new PDetailDTO();
+				pDto.setParkingCode(ParkingCode);
+				pDto.setParkingPosition(rs.getInt("parkingPosition"));
+				allList.add(pDto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		} //try
+		
+		return allList;
+	} //getAllParkingDetail
 	
 	//예약 가능한 자리 조회
 	public List<PDetailDTO> getAvailable(ResDTO rDto) {
@@ -118,8 +144,7 @@ public class ResDAO {
 				available.add(pdDto);
 			} //while
 			
-			System.out.println("DAO: 예약 가능한 자리 조회 완료");
-			System.out.println(available.size());
+			System.out.println("DAO: 예약 가능한 자리 조회 완료 - " + available.size());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

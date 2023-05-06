@@ -5,18 +5,17 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.team2.admin.db.ParkingDTO;
+import com.team2.admin.db.ResDTO;
 import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
-import com.team2.parking.db.ParkingDTO;
 import com.team2.parkingdetail.db.PDetailDTO;
-import com.team2.reservation.db.ResDTO;
 import com.team2.reservation.db.ResDAO;
 
 public class ReservationAction implements Action {

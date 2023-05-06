@@ -1,3 +1,5 @@
+<%@page import="java.util.List"%>
+<%@page import="com.team2.parkingdetail.db.PDetailDTO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -43,7 +45,7 @@
 			dynamic:false,
 			scrollbar:true,
 			change:function(time) {
-				console.log(time);
+// 				console.log(time);
 // 				$('#toTime').timepicker({startTime:time});
 			}
 		});
@@ -58,7 +60,7 @@
 // 			minTime:$('#fromTime').val()
 		});
 		
-		$('#pArea').find('a').each(function() {
+		$('#pArea').find('td').each(function() {
 // 			alert("클릭");
 // 			alert($(this).text());
 			$(this).click(function() {
@@ -66,39 +68,87 @@
 			});
 		}); //pArea
 		
+			
 		$('#dateTimeBtn').click(function() {
 			let selectedDate = $('#datepicker').datepicker('getDate');
 			let fromTime = $('#fromTime').timepicker('getTime');
 			let toTime = $('#toTime').timepicker('getTime');
 			let parkingCode = $('#parkingCode').val();
 			
+			let applied = [];
+			
+			$('#pArea').find('td').each(function() {
+				if ( $(this).find('a').length > 0 ) {
+					applied.push( $(this).text().trim() );
+				}
+			});
+			console.log(applied);
+					
 			$.ajax({
 				url:"./Available.park",
 				type:"post",
 				data:{date:selectedDate,fromTime:fromTime,toTime:toTime,parkingCode:parkingCode},
 				success:function(data) {
-// 					alert("sucess");
-					console.log(data);
-// 					console.log(JSON.stringify(data));
+// 					console.log(data);
+					
 					var i;
-// 					for(i=0; i<data.length; i++) {
-// 						$('#pCodePosition').append(data[i].parkingCode).append(data[i].parkingPosition);
-// 					}
-					
 					for(i=0; i<data.length-1; i++) {
-// 						$('#available').find('table').append("<tr><td>"+data[i].parkingCode+"</td><td>"+data[i].parkingPosition+"</td></tr>");
-						$('#available').find('table').html("<tr><td>"+data[i].parkingCode+"</td><td>"+data[i].parkingPosition+"</td></tr>");
-					}
+						let tmp = "<tr>";
+						tmp += "<td>" + data[i].parkingCode + "</td>";
+						tmp += "<td>" + data[i].parkingPosition + "</td>";
+						tmp += "</tr>";
+						
+						if(i==0) {
+							$('#available').find('table').html(tmp);
+						} else {
+							$('#available').find('table').append(tmp);
+						} //if-else
+							
+						let park = data[i].parkingCode + data[i].parkingPosition;	
+						$('#pArea').find('td').each(function() {
+							let tdVal = $(this).text().trim();
+							let nextTdVal = $(this).next().text().trim();
+							
+							console.log("tdVal: " + tdVal);
+// 							console.log("nextTdVal: " + nextTdVal);
+							
+// 						for(var j=i; j<=i; j++) {
+// 							let tdVal = $(this).text().trim();
+							
+							if( tdVal==park ) {
+								console.log("park: " + park);
+								console.log("applied.indexOf(park): " + applied.indexOf(park));
+								
+								if( applied.indexOf(park)<0 ) {
+									$(this).html(function(idx, txt) {
+										return "<a href='#'>" + txt + "</a>";
+									});
+								}
+									
+								
+							} else if( tdVal!=park ) {
+								console.log("applied.indexOf(tdVal): " + applied.indexOf(tdVal));
+								if( applied.indexOf(tdVal)>=0 ) {
+									$(this).html(tdVal);
+								}
+							} //if-else(tdVal==park)
+							
+							tdVal = nextTdVal;
+// 						} //for
+						}); //pArea
+						
+					} //for
 					
+					$('#price').attr('value',data[i].price);
 					
-					$('#price').attr('value',data[i-1].price);
-				},
+				},  //success
 				error:function() {
 					alert("error");
-				}
+				}  //error
 			}); //ajax
+			
+			
 		}); //dateTimeBtn
-		
 		
 	});
 	
@@ -112,6 +162,7 @@
 		<p> ${pDto.inOutDoor } </p>
 		<hr>
 		주차장 주소: ${pDto.parkingAdr } <br>
+		주차장 연락처: ${pDto.parkingTel } <br>
 	</div>
 	
 	희망 예약 날짜: ${resDate } <br>
@@ -133,10 +184,6 @@
 	<hr>
 	<div id="available">
 		이용 가능한 자리:
-<%-- 		  <c:forEach var="a" items="${available }"> --%>
-<%-- 			${a.parkingCode} --%>
-<%-- 			${a.parkingPosition } --%>
-<%-- 		  </c:forEach> --%>
 		<table>
 		  <c:forEach var="a" items="${available }">
 		   <tr>
@@ -147,25 +194,36 @@
 		</table>
 	</div>
 	
-	<div>
-		재조회:
-		<span id="pCodePosition"> </span>
-	</div>
-	
 	<hr>
 	
+<%-- 	<div id="pArea">
+	주차장 좌석 배치
+		<table id="pAreaTable">
+			<c:forEach var="al" items="${allList }">
+				<tr>
+					<td> ${al.parkingCode }${al.parkingPosition } </td>
+				</tr>
+			</c:forEach>
+		</table>
+	</div>
+ --%>	
 	<div id="pArea">
 	주차장 좌석 배치
 		<table>
 			<tr>
-				<td><a id="a1" href="#">A1</a></td>
-				<td><a id="a2" href="#">A2</a></td>
-				<td><a id="a3" href="#">A3</a></td>
-				<td><a id="a4" href="#">A4</a></td>
-				<td><a id="a5" href="#">A5</a></td>
+				<td><a href="#"> B1 </a></td>
+				<td> B2 </td>
+				<td><a href="#"> B3 </a></td>
+				<td> B4 </td>
+				<td><a href="#"> B5 </a></td>
 			</tr>
 		</table>
 	</div>
+	
+	<%
+	
+	%>
+	
 	
 	<div id="selectedArea">
 		selected
@@ -175,11 +233,20 @@
 	
 	<div id="payInfo">
 		<form action="./PayAction.park" method="post">
+			<!-- 회원 아이디 -->
+<%-- 		<input type="hidden" id="id" value="${sessionScope.id }"> --%>
+			<!-- 주차장코드 -->
+			<input type="hidden" id="parkingCode" value="${available[0].parkingCode }">
+			<!-- 주차장자리번호 -->
+			<input type="hidden" id="parkingPosition" value="">
+			<!-- 예약날짜 -->
+			<!-- 입차시간 -->
+			<!-- 출차시간 -->
 			연락처: <input type="text" id="tel">
 			차량번호: <input type="text" id="carNo">
 			사용 포인트: <input type="text" id="usePoint">
 			<div>
-				<h3> 결제 예상금액: <input type="text" id="price" value="" readonly></h3>
+				<h3> 결제 예상금액: <input type="text" id="price" value="${price }" readonly></h3>
 				<input type="submit" value="결제하기">
 			</div>
 		</form>
