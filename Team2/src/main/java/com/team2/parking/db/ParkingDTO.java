@@ -6,7 +6,14 @@ public class ParkingDTO {
 	private String parkingAdr;
 	private String inOutDoor;
 	private int parkingTotal;
+	private String parkingTel;
 	
+	public String getParkingTel() {
+		return parkingTel;
+	}
+	public void setParkingTel(String parkingTel) {
+		this.parkingTel = parkingTel;
+	}
 	public String getParkingCode() {
 		return parkingCode;
 	}
@@ -36,6 +43,12 @@ public class ParkingDTO {
 	}
 	public void setParkingTotal(int parkingTotal) {
 		this.parkingTotal = parkingTotal;
+	}
+	
+	@Override
+	public String toString() {
+		return "ParkingDTO [parkingCode=" + parkingCode + ", parkingName=" + parkingName + ", parkingAdr=" + parkingAdr
+				+ ", inOutDoor=" + inOutDoor + ", parkingTotal=" + parkingTotal + ", parkingTel=" + parkingTel + "]";
 	}
 	
 } //ParkingDTO
