@@ -77,33 +77,6 @@ public class ResDAO {
 		return pDto;
 	} //getParking()
 	
-	//주차장 모든 자리
-	public List<PDetailDTO> getAllParkingDetail(String ParkingCode) {
-		List<PDetailDTO> allList = new ArrayList<>(); 
-		
-		try {
-			con = getCon();
-			
-			sql = "SELECT * FROM parkingDetail WHERE parkingCode=?";
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, ParkingCode);
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()) {
-				PDetailDTO pDto = new PDetailDTO();
-				pDto.setParkingCode(ParkingCode);
-				pDto.setParkingPosition(rs.getInt("parkingPosition"));
-				allList.add(pDto);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeDB();
-		} //try
-		
-		return allList;
-	} //getAllParkingDetail
-	
 	//예약 가능한 자리 조회
 	public List<PDetailDTO> getAvailable(ResDTO rDto) {
 		List<PDetailDTO> available = new ArrayList<>();
@@ -119,9 +92,8 @@ public class ResDAO {
 					+ " FROM reservation "
 					+ " WHERE parkingCode=? "
 					+ " AND resDate=?"
-					+ " AND (( parkInTime>? AND parkInTime<? ) "
-					+ " OR (parkOutTime>? AND parkOutTime<?) "
-					+ " ))";
+					+ " AND ( parkInTime<? AND parkOutTime>? ) "
+					+ " )";
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, rDto.getParkingCode());
@@ -129,10 +101,8 @@ public class ResDAO {
 			pstmt.setDate(3, rDto.getResDate());
 			
 			
-			pstmt.setTime(4, rDto.getParkInTime());
-			pstmt.setTime(5, rDto.getParkOutTime());
-			pstmt.setTime(6, rDto.getParkInTime());
-			pstmt.setTime(7, rDto.getParkOutTime());
+			pstmt.setTime(4, rDto.getParkOutTime());
+			pstmt.setTime(5, rDto.getParkInTime());
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -144,7 +114,8 @@ public class ResDAO {
 				available.add(pdDto);
 			} //while
 			
-			System.out.println("DAO: 예약 가능한 자리 조회 완료 - " + available.size());
+			System.out.println("DAO: 예약 가능한 자리 조회 완료");
+			System.out.println(available.size());
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -184,7 +155,36 @@ public class ResDAO {
 		return result;
 	} //getPrice()
 	
-	
+	//예약정보 insert
+	public int reservate(ResDTO dto) {
+		int result = 0;
+		
+		try {
+			con = getCon();
+			
+			sql = "INSERT INTO reservation (id,parkingCode,parkingPosition,resDate,parkInTime,parkOutTime,price,carNo) "
+					+ " VALUES (?,?,?,?,?,?,?,?)";
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getId());
+			pstmt.setString(2, dto.getParkingCode());
+			pstmt.setInt(3, dto.getParkingPosition());
+			pstmt.setDate(4, dto.getResDate());
+			pstmt.setTime(5, dto.getParkInTime());
+			pstmt.setTime(6, dto.getParkOutTime());
+			pstmt.setInt(7, dto.getPrice());
+			pstmt.setString(8, dto.getCarNo());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		
+		return result;
+	} //reservate()
 	
 	
 	

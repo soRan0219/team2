@@ -1,0 +1,64 @@
+@charset "UTF-8";
+
+img {
+	overflow-clip-margin: content-box;
+	overflow: clip;
+}
+
+div#res_click_map {
+	position: relative;
+	overflow-x: scroll;
+	width: 100%;
+	margin-top: 0px;
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+}
+
+div#res_click_map>img {
+	width: 800px;
+	position: relative;
+	display: block;
+}
+
+div#res_click_map .click_inner a {
+	position: absolute;
+	width: 50px;
+	height: 75px;
+	text-align: center;
+	line-height: 62px;
+	font-size: 13px;
+	color: #fff;
+	background: #ccc;
+}
+
+/* div#res_click_map .click_inner a.selected {
+	background: #ff0080;
+} */
+div#res_click_map .click_inner a.cbtn_on.selected {
+	background: #ff0080;
+}
+
+div#res_click_map .click_inner a.cbtn_on {
+	background: #8080ff;
+}
+
+div#res_click_map .click_inner a.cbtn_01 {
+	top: 120px;
+	left: 128px;
+}
+div#res_click_map .click_inner a.cbtn_02 {
+	top: 120px;
+	left: 215px;
+}
+div#res_click_map .click_inner a.cbtn_03 {
+	top: 120px;
+	left: 300px;
+}
+div#res_click_map .click_inner a.cbtn_04 {
+	top: 120px;
+	left: 385px;
+}
+div#res_click_map .click_inner a.cbtn_05 {
+	top: 120px;
+	left: 470px;
+}

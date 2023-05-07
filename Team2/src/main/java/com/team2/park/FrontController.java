@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
-import com.team2.reservation.action.AreaInfoAction;
 import com.team2.reservation.action.AvailableAction;
+import com.team2.reservation.action.PayAction;
 import com.team2.reservation.action.ReservationAction;
 
 @WebServlet("*.park")
@@ -73,45 +73,9 @@ public class FrontController extends HttpServlet {
 			
 		} //if(ReservationAction)
 		
-		//자리 정보 조회 - /AreaInfo.park
-		else if(command.equals("/AreaInfo.park")) {
-			System.out.println("C: /AreaInfo.park 호출");
-			
-			//AreaInfoAction()
-			action = new AreaInfoAction();
-			
-			try {
-				forward = action.execute(request, response);
-			} catch (Exception e) {
-				e.printStackTrace();
-			} //try
-		} //if(AreaInfo)
-		
 		//예약가능자리조회(JSON) - /Available.park
 		else if(command.equals("/Available.park")) {
 			System.out.println("C: /Available.park 호출");
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			/////////////////////////////////////////////////
-			
 			
 			//AvailableAction()
 			action = new AvailableAction();
@@ -122,16 +86,20 @@ public class FrontController extends HttpServlet {
 				e.printStackTrace();
 			} //try
 			
-			
-			
-			/////////////////////////////////////////////////
-			
 		} //if(Available)
 		
 		//결제 - /PayAction.park
 		else if(command.equals("/PayAction.park")) {
 			System.out.println("C: /PayAction.park 호출");
 			
+			//PayAction() 호출
+			action = new PayAction();
+			
+			try {
+				forward = action.execute(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 		} //if(PayAction)
 		

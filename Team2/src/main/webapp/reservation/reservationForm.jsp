@@ -37,26 +37,35 @@
 		$('#fromTime').timepicker({
 			timeFormat:'H:mm',
 			interval:30,
-			startTime:'00:00',
-			defaultTime:'12:00',
+			startTime:'06:00',
+			maxTime: '22:00',
 			dynamic:false,
 			scrollbar:true,
 			change:function(time) {
-				console.log(time);
-// 				$('#toTime').timepicker({startTime:time});
+				var minTime = new Date(time);
+				minTime.setMinutes(minTime.getMinutes() + 30);
+				$('#toTime').timepicker('option', 'minTime', minTime);
 			}
 		});
 
 		$('#toTime').timepicker({
 			timeFormat:'H:mm',
 			interval:30,
-			startTime:'00:00',
-// 			startTime:$('#fromTime').val(),
+			startTime:'06:00',
+			maxTime: '22:00',
 			dynamic:false,
 			scrollbar:true
-// 			minTime:$('#fromTime').val()
 		});
 		
+		$('input[type=submit]').click(function() {
+			var selectedDate = $('#datepicker').val();
+			var fromTime = $('#fromTime').val();
+			var toTime = $('#toTime').val();
+			
+			$('#selectedDate').val(selectedDate);
+			$('input[type="hidden"]#fromTime').val(fromTime);
+			$('input[type="hidden"]#toTime').val(toTime);
+		});
 		
 	});
 	
@@ -75,9 +84,13 @@
 				</select>
 			</div>
 			<div>
-				<input type="text" id="datepicker" name="selectedDate">
-				<input type="text" id="fromTime" name="fromTime">
-				<input type="text" id="toTime" name="toTime">
+				<input type="text" id="datepicker">
+				<input type="text" id="fromTime">
+				<input type="text" id="toTime">
+				
+				<input type="hidden" id="selectedDate" name="selectedDate">
+				<input type="hidden" id="fromTime" name="fromTime">
+				<input type="hidden" id="toTime" name="toTime">
 				<input type="submit" value="예약하기">
 			</div>
 		</form>
