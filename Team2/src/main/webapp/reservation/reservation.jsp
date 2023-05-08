@@ -307,6 +307,8 @@
 		<form action="./PayAction.park" id="payInfo" method="post">
 			<!-- 회원 아이디 -->
 			<input type="hidden" id="id" name="id" value="${sessionScope.id }">
+			<!-- 회원 이메일 -->
+			<input type="hidden" id="email" name="email" value="${sessionScope.email }">
 			<!-- 주차장코드 -->
 			<input type="hidden" id="parkingCode" name="parkingCode" value="${available[0].parkingCode }">
 			<!-- 주차장자리번호 -->
@@ -331,18 +333,44 @@
 	
 	<script type="text/javascript">
 	
+		function getToday() {
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = ("0" + (1 + date.getMonth())).slice(-2);
+			var day = ("0" + date.getDate()).slice(-2);
+			
+			return year + "-" + month + "-" + day;
+		}
+		
 		/* iamport 결제 API */
 		var IMP = window.IMP;  //생략 가능
 		IMP.init("imp81382761");  //가맹점 고유번호
 		
 		function requestPay() {
-			var name = $('#payInfo input#parkingCode').val() + $('#payInfo input#parkingPosition').val();
+			//예약 테이블에 들어갈 값
+			var id = $('#payInfo input#id').val();
+			var code = $('#payInfo input#parkingCode').val();
+			var position = $('#payInfo input#parkingPosition').val(); 
+			var name = code + position;
+			
+			var resDate = $('#payInfo input#resDate').val();
+			var parkInTime = $('#payInfo input#parkInTime').val();
+			var parkOutTime = $('#payInfo input#parkOutTime').val();
 			var price = $('#price').val();
+			var carNo = $('#carNo').val();
 			var tel = $('#tel').val();
+			
+			//결제 테이블에 들어갈 값
+			var today = getToday(); 
+			
+			var email = $('#email').val();
+			
+			let msg;
 			
 			console.log(name);
 			console.log(price);
 			console.log(tel);
+			console.log(email);
 			
 			IMP.request_pay({
 				pg: "kakaopay",  //PG사
@@ -350,20 +378,40 @@
 				merchant_uid: "order_" + new Date().getTime(),  //주문번호
 				name: name,  //결제창에서 보여질 이름(제품이름)
 				amount: price,  //가격(숫자타입)
-				buyer_email: "aaa@gmail.kom",  //구매자 이메일
+				buyer_email: email,  //구매자 이메일
 				buyer_tel: tel  //구매자 전화번호
 			}, function(rsp) {
 				console.log(rsp);
 				//rsp.imp_uid 값으로 결제 단건조회 API 호출하여 결제결과 판단
 				//결제 검증()
 				if(rsp.success) {
-					var msg = "결제완료";
-					msg += "고유ID: " + rsp.imp_uid;
-					msg += "상점 거래 ID: " + rsp.merchant_uid;
-					msg += "결제 금액: " + rsp.paid_amount;
-					msg += "카드 승인번호: " + rsp.apply_num;
+				
+					$.ajax({
+						url: "./PayAction.park",
+						type: "post",
+						dataType: "json",
+						data: {
+							"id":id,
+							"parkingCode":code,
+							"parkingPosition":position,
+							"resDate":resDate,
+							"parkInTime":parkInTime,
+							"parkOutTime":parkOutTime,
+							"price":price,
+							"tel":tel,
+							"carNo":carNo
+						}
+					}).done(function(data) {
+						
+						msg = "결제완료";
+						msg += "고유ID: " + rsp.imp_uid;
+						msg += "상점 거래 ID: " + rsp.merchant_uid;
+						msg += "결제 금액: " + rsp.paid_amount;
+						msg += "카드 승인번호: " + rsp.apply_num;
+					});
+				
 				} else {
-					var msg = "결제 실패";
+					msg = "결제 실패";
 					msg += "에러내용: " + rsp.error_msg;
 				}
 				alert(msg);
