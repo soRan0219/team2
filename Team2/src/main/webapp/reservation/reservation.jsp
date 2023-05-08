@@ -10,8 +10,11 @@
 <title> reservation </title>
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath }/lot.css">
-
+<!-- jQuery 라이브러리 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<!-- iamport 결제 라이브러리 -->
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<!-- datepicker, timepicker -->
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
@@ -105,7 +108,7 @@
 							let code = $(this).find('#code').val();
 							let position = $(this).find('#position').val();
 							let result = code + position;
-							console.log(result);
+// 							console.log(result);
 							
 							if(result==park) {
 								$(this).removeClass('cbtn_off').addClass('cbtn_on');
@@ -128,6 +131,51 @@
 		}); //dateTimeBtn
 		
 	});
+	
+// 	/* iamport 결제 API */
+// 	var IMP = window.IMP;  //생략 가능
+// 	IMP.init("imp81382761");  //가맹점 고유번호
+	
+// 	//필요한 값
+// 	var name = $('#payInfo input#parkingCode').val() + $('#payInfo input#parkingPosition').val();
+// 	var price = $('#price').val();
+// 	var tel = $('#tel').val();
+	
+// 	console.log($('#payInfo input#parkingCode').val());
+// 	console.log($('#payInfo input#parkingPosition').val());
+// 	console.log($('#price').val());
+// 	console.log($('#tel').val());
+// 	console.log(name + " / " + price + " / " + tel);
+	
+// 	function requestPay() {
+// 		IMP.request_pay({
+// 			pg: "kakaopay",  //PG사
+// 			pay_method: "card",  //결제수단
+// 			merchant_uid: "order_" + new Date().getTime(),  //주문번호
+// 			name: name,  //결제창에서 보여질 이름(제품이름)
+// 			amount: price,  //가격(숫자타입)
+// 			buyer_email: "aaa@gmail.kom",  //구매자 이메일
+// 			buyer_tel: tel  //구매자 전화번호
+// // 			buyer_addr: "부산광역시 부산진구 부전동",  //구매자 주소
+// // 			buyer_postcode: "11111"  //구매자 우편번호
+// 		}, function(rsp) {
+// 			console.log(rsp);
+// 			//rsp.imp_uid 값으로 결제 단건조회 API 호출하여 결제결과 판단
+// 			//결제 검증()
+// 			if(rsp.success) {
+// 				var msg = "결제완료";
+// 				msg += "고유ID: " + rsp.imp_uid;
+// 				msg += "상점 거래 ID: " + rsp.merchant_uid;
+// 				msg += "결제 금액: " + rsp.paid_amount;
+// 				msg += "카드 승인번호: " + rsp.apply_num;
+// 			} else {
+// 				var msg = "결제 실패";
+// 				msg += "에러내용: " + rsp.error_msg;
+// 			}
+// 			alert(msg);
+// 		});
+// 	} //requestPay()
+	
 	
 </script>
 </head>
@@ -181,14 +229,14 @@
 			});
 			
 			for(var i=0; i<aList.length; i++) {
-				console.log(aList[i]);
+// 				console.log(aList[i]);
 				let park = aList[i].parkingCode + aList[i].parkingPosition;
 				
 				$('#res_click_map').find('.cbtn').each(function(idx, elem) {
 					let code = $(this).find('#code').val();
 					let position = $(this).find('#position').val();
 					let result = code + position;
-					console.log(result);
+// 					console.log(result);
 					
 					if(result==park) {
 						$(this).removeClass('cbtn_off').addClass('cbtn_on');
@@ -246,6 +294,8 @@
 					$(this).addClass('selected');
 					$('#payInfo input#parkingCode').val( $(this).find('#code').val() );
 					$('#payInfo input#parkingPosition').val( $(this).find('#position').val() );
+// 					console.log($('#payInfo input#parkingPosition').val());
+// 					console.log($('#tel').val());
 				} 
 			}); //cbtnClick
 		});
@@ -276,7 +326,50 @@
 				<input type="submit" value="결제하기">
 			</div>
 		</form>
+				<button onclick="requestPay()"> 결제하기(iamport) </button>
 	</div>
+	
+	<script type="text/javascript">
+	
+		/* iamport 결제 API */
+		var IMP = window.IMP;  //생략 가능
+		IMP.init("imp81382761");  //가맹점 고유번호
+		
+		function requestPay() {
+			var name = $('#payInfo input#parkingCode').val() + $('#payInfo input#parkingPosition').val();
+			var price = $('#price').val();
+			var tel = $('#tel').val();
+			
+			console.log(name);
+			console.log(price);
+			console.log(tel);
+			
+			IMP.request_pay({
+				pg: "kakaopay",  //PG사
+				pay_method: "card",  //결제수단
+				merchant_uid: "order_" + new Date().getTime(),  //주문번호
+				name: name,  //결제창에서 보여질 이름(제품이름)
+				amount: price,  //가격(숫자타입)
+				buyer_email: "aaa@gmail.kom",  //구매자 이메일
+				buyer_tel: tel  //구매자 전화번호
+			}, function(rsp) {
+				console.log(rsp);
+				//rsp.imp_uid 값으로 결제 단건조회 API 호출하여 결제결과 판단
+				//결제 검증()
+				if(rsp.success) {
+					var msg = "결제완료";
+					msg += "고유ID: " + rsp.imp_uid;
+					msg += "상점 거래 ID: " + rsp.merchant_uid;
+					msg += "결제 금액: " + rsp.paid_amount;
+					msg += "카드 승인번호: " + rsp.apply_num;
+				} else {
+					var msg = "결제 실패";
+					msg += "에러내용: " + rsp.error_msg;
+				}
+				alert(msg);
+			});
+		} //requestPay()
+	</script>
 	
 </body>
 </html>

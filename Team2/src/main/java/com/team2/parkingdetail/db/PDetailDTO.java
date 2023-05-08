@@ -16,5 +16,9 @@ public class PDetailDTO {
 	public void setParkingPosition(int parkingPosition) {
 		this.parkingPosition = parkingPosition;
 	}
+	@Override
+	public String toString() {
+		return "PDetailDTO [parkingCode=" + parkingCode + ", parkingPosition=" + parkingPosition + "]";
+	}
 	
 } //PDDTO
