@@ -177,6 +177,7 @@ public class ResDAO {
 			
 			result = pstmt.executeUpdate();
 			
+			System.out.println("DAO: 예약 테이블에 정보 저장 - " + result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -186,7 +187,33 @@ public class ResDAO {
 		return result;
 	} //reservate()
 	
-	
+	//결제정보 insert
+	public int pay(PayDTO dto) {
+		int result = 0;
+		
+		try {
+			con = getCon();
+			
+			sql = "INSERT INTO pay VALUES(?,?,?,?,?)";
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getPayNo());
+			pstmt.setString(2, dto.getPayWay());
+			pstmt.setString(3, dto.getPayCondition());
+			pstmt.setDate(4, dto.getPayDate());
+			pstmt.setInt(5, dto.getTotalPrice());
+			
+			result = pstmt.executeUpdate();
+			
+			System.out.println("DAO: 결제 테이블에 정보 저장 - " + result);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeDB();
+		}
+		
+		return result;
+	} //pay()
 	
 	
 } //resDAO

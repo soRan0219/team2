@@ -76,8 +76,8 @@
 			$('#payInfo input#parkingPosition').val('');
 			
 			$('#resDate').val(selectedDate);
-			$('#parkInTime').val(fromTime);
-			$('#parkOutTime').val(toTime);
+			$('#parkInTime').val(fromTime + ":00");
+			$('#parkOutTime').val(toTime + ":00");
 			
 			$('#res_click_map').find('.cbtn').each(function() {
 				$(this).removeClass('cbtn_on').addClass('cbtn_off');
@@ -131,50 +131,6 @@
 		}); //dateTimeBtn
 		
 	});
-	
-// 	/* iamport 결제 API */
-// 	var IMP = window.IMP;  //생략 가능
-// 	IMP.init("imp81382761");  //가맹점 고유번호
-	
-// 	//필요한 값
-// 	var name = $('#payInfo input#parkingCode').val() + $('#payInfo input#parkingPosition').val();
-// 	var price = $('#price').val();
-// 	var tel = $('#tel').val();
-	
-// 	console.log($('#payInfo input#parkingCode').val());
-// 	console.log($('#payInfo input#parkingPosition').val());
-// 	console.log($('#price').val());
-// 	console.log($('#tel').val());
-// 	console.log(name + " / " + price + " / " + tel);
-	
-// 	function requestPay() {
-// 		IMP.request_pay({
-// 			pg: "kakaopay",  //PG사
-// 			pay_method: "card",  //결제수단
-// 			merchant_uid: "order_" + new Date().getTime(),  //주문번호
-// 			name: name,  //결제창에서 보여질 이름(제품이름)
-// 			amount: price,  //가격(숫자타입)
-// 			buyer_email: "aaa@gmail.kom",  //구매자 이메일
-// 			buyer_tel: tel  //구매자 전화번호
-// // 			buyer_addr: "부산광역시 부산진구 부전동",  //구매자 주소
-// // 			buyer_postcode: "11111"  //구매자 우편번호
-// 		}, function(rsp) {
-// 			console.log(rsp);
-// 			//rsp.imp_uid 값으로 결제 단건조회 API 호출하여 결제결과 판단
-// 			//결제 검증()
-// 			if(rsp.success) {
-// 				var msg = "결제완료";
-// 				msg += "고유ID: " + rsp.imp_uid;
-// 				msg += "상점 거래 ID: " + rsp.merchant_uid;
-// 				msg += "결제 금액: " + rsp.paid_amount;
-// 				msg += "카드 승인번호: " + rsp.apply_num;
-// 			} else {
-// 				var msg = "결제 실패";
-// 				msg += "에러내용: " + rsp.error_msg;
-// 			}
-// 			alert(msg);
-// 		});
-// 	} //requestPay()
 	
 	
 </script>
@@ -363,7 +319,7 @@
 			//결제 테이블에 들어갈 값
 			var today = getToday(); 
 			
-			var email = $('#email').val();
+// 			var email = $('#email').val();
 			
 			let msg;
 			
@@ -371,6 +327,10 @@
 			console.log(price);
 			console.log(tel);
 			console.log(email);
+			console.log(parkInTime);
+			console.log(parkInTime.length);
+			console.log(parkOutTime);
+			console.log(today);
 			
 			IMP.request_pay({
 				pg: "kakaopay",  //PG사
@@ -378,7 +338,7 @@
 				merchant_uid: "order_" + new Date().getTime(),  //주문번호
 				name: name,  //결제창에서 보여질 이름(제품이름)
 				amount: price,  //가격(숫자타입)
-				buyer_email: email,  //구매자 이메일
+// 				buyer_email: email,  //구매자 이메일
 				buyer_tel: tel  //구매자 전화번호
 			}, function(rsp) {
 				console.log(rsp);
@@ -397,11 +357,25 @@
 							"resDate":resDate,
 							"parkInTime":parkInTime,
 							"parkOutTime":parkOutTime,
-							"price":price,
+							"price":price,  //예약, 결제
 							"tel":tel,
-							"carNo":carNo
+							"carNo":carNo,
+							"payNo":rsp.merchant_uid,  //결제
+							"payDate":today  //결제
 						}
 					}).done(function(data) {
+						
+						console.log(data);
+						console.log(data.resResult + ", " + data.payResult);
+						
+						if(data.resResult==1 && data.payResult==1) {
+							var con = confirm("결제가 완료되었습니다. 예약상세페이지로 이동하시겠습니까?");
+							if(con) {
+								location.href = "./Main.park";
+							} else {
+								history.back();
+							}
+						}
 						
 						msg = "결제완료";
 						msg += "고유ID: " + rsp.imp_uid;
@@ -414,7 +388,7 @@
 					msg = "결제 실패";
 					msg += "에러내용: " + rsp.error_msg;
 				}
-				alert(msg);
+				console.log(msg);
 			});
 		} //requestPay()
 	</script>

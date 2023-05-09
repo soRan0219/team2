@@ -7,10 +7,11 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.JsonObject;
 import com.team2.admin.db.ResDTO;
 import com.team2.commons.Action;
 import com.team2.commons.ActionForward;
-import com.team2.commons.JSForward;
+import com.team2.reservation.db.PayDTO;
 import com.team2.reservation.db.ResDAO;
 
 public class PayAction implements Action {
@@ -42,9 +43,8 @@ public class PayAction implements Action {
 		String contact = request.getParameter("tel");
 		String carNo = request.getParameter("carNo");
 		int price = Integer.parseInt(request.getParameter("price"));
-		System.out.println(price);
 		
-		//위 정보 모두 저장
+		//위 정보 모두 ResDTO에 저장
 		ResDTO dto = new ResDTO();
 		dto.setId(id);
 		dto.setParkingCode(parkingCode);
@@ -55,14 +55,37 @@ public class PayAction implements Action {
 		dto.setPrice(price);
 		dto.setCarNo(carNo);
 		
-		ResDAO dao = new ResDAO();
-		int result = dao.reservate(dto);
+		//결제 테이블에 들어갈 정보
+		String payNo = request.getParameter("payNo");
 		
-		if(result==0) {
-			JSForward.alertAndBack(response, "결제에 실패했습니다.");
-		} else {
-			JSForward.confirmAndMove(response, "결제성공! 예약내역 페이지로 이동하시겠습니까?", "./ResInfo.park", "./Main.park");
-		}
+		String strPayDate = request.getParameter("payDate");
+		Date parsedPayDate = new SimpleDateFormat("yyyy-MM-dd").parse(strPayDate);
+		java.sql.Date payDate = new java.sql.Date(parsedPayDate.getTime());
+		
+		//결제 정보 PayDTO에 저장
+		PayDTO payDto = new PayDTO();
+		payDto.setPayNo(payNo);
+		payDto.setPayWay("card");
+		payDto.setPayCondition("paid");
+		payDto.setPayDate(payDate);
+		payDto.setTotalPrice(price);
+		
+		ResDAO dao = new ResDAO();
+		int resResult = dao.reservate(dto);
+		int payResult = dao.pay(payDto);
+		
+		System.out.println("resResult: " + resResult + "\npayResult: " + payResult);
+		
+		JsonObject obj = new JsonObject();
+		
+		response.setContentType("application/x-json; charset=utf-8");
+		response.getWriter().print(obj);
+		
+//		if(result==0) {
+//			JSForward.alertAndBack(response, "결제에 실패했습니다.");
+//		} else {
+//			JSForward.confirmAndMove(response, "결제성공! 예약내역 페이지로 이동하시겠습니까?", "./ResInfo.park", "./Main.park");
+//		}
 		
 		return null;
 	} //execute()
