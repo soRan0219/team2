@@ -87,22 +87,34 @@ public class ResDAO {
 			sql = "SELECT parkingCode, parkingPosition "
 					+ " FROM parkingDetail "
 					+ " WHERE parkingCode=? "
-					+ " AND parkingPosition NOT IN "
+					+ " AND (parkingPosition NOT IN "
 					+ " (SELECT parkingPosition "
 					+ " FROM reservation "
 					+ " WHERE parkingCode=? "
 					+ " AND resDate=?"
 					+ " AND ( parkInTime<? AND parkOutTime>? ) "
+					+ " AND resStatus=1) "
+					+ " OR ( "
+					+ " parkingPosition IN ( "
+					+ " SELECT parkingPosition "
+					+ " FROM reservation "
+					+ " WHERE parkingCode=? "
+					+ " AND resDate=? "
+					+ " AND (parkInTime<? AND parkOutTime>?) "
+					+ " AND resStatus=0 )) "
 					+ " )";
 			pstmt = con.prepareStatement(sql);
 			
 			pstmt.setString(1, rDto.getParkingCode());
 			pstmt.setString(2, rDto.getParkingCode());
 			pstmt.setDate(3, rDto.getResDate());
-			
-			
 			pstmt.setTime(4, rDto.getParkOutTime());
 			pstmt.setTime(5, rDto.getParkInTime());
+			
+			pstmt.setString(6, rDto.getParkingCode());
+			pstmt.setDate(7, rDto.getResDate());
+			pstmt.setTime(8, rDto.getParkOutTime());
+			pstmt.setTime(9, rDto.getParkInTime());
 			
 			rs = pstmt.executeQuery();
 			while(rs.next()) {
@@ -114,8 +126,7 @@ public class ResDAO {
 				available.add(pdDto);
 			} //while
 			
-			System.out.println("DAO: 예약 가능한 자리 조회 완료");
-			System.out.println(available.size());
+			System.out.println("DAO: 예약 가능한 자리 조회 완료 - " + available.size());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -77,15 +77,11 @@ public class PayAction implements Action {
 		System.out.println("resResult: " + resResult + "\npayResult: " + payResult);
 		
 		JsonObject obj = new JsonObject();
+		obj.addProperty("resResult", resResult);
+		obj.addProperty("payResult", payResult);
 		
 		response.setContentType("application/x-json; charset=utf-8");
 		response.getWriter().print(obj);
-		
-//		if(result==0) {
-//			JSForward.alertAndBack(response, "결제에 실패했습니다.");
-//		} else {
-//			JSForward.confirmAndMove(response, "결제성공! 예약내역 페이지로 이동하시겠습니까?", "./ResInfo.park", "./Main.park");
-//		}
 		
 		return null;
 	} //execute()

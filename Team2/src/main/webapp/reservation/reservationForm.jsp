@@ -38,6 +38,7 @@
 			timeFormat:'H:mm',
 			interval:30,
 			startTime:'06:00',
+			minTime:'06:00',
 			maxTime: '22:00',
 			dynamic:false,
 			scrollbar:true,
@@ -52,6 +53,7 @@
 			timeFormat:'H:mm',
 			interval:30,
 			startTime:'06:00',
+			minTime:'06:00',
 			maxTime: '22:00',
 			dynamic:false,
 			scrollbar:true
@@ -63,11 +65,29 @@
 			var toTime = $('#toTime').val();
 			
 			$('#selectedDate').val(selectedDate);
-			$('input[type="hidden"]#fromTime').val(fromTime);
-			$('input[type="hidden"]#toTime').val(toTime);
+			$('input[type="hidden"]#parkInTime').val(fromTime);
+			$('input[type="hidden"]#parkOutTime').val(toTime);
 		});
 		
 	});
+	
+	function check() {
+		if(document.fr.datepicker.value=="") {
+			alert("날짜를 선택하세요");
+			document.fr.datepicker.focus();
+			return false;
+		} 
+		if(document.fr.fromTime.value=="") {
+			alert("입차시간을 선택하세요");
+			document.fr.fromTime.focus();
+			return false;
+		}
+		if(document.fr.toTime.value=="") {
+			alert("출차시간을 선택하세요");
+			document.fr.toTime.focus();
+			return false;
+		}
+	} //check()
 	
 </script>
 </head>
@@ -75,7 +95,7 @@
 	<h1> reservationForm.jsp </h1>
 	
 	<div>
-		<form action="./ReservationAction.park" name="fr" method="post">
+		<form action="./ReservationAction.res" name="fr" method="post" onsubmit="return check();">
 			<div>
 				<select name="parking">
 				 <option value="A"> 주차장1 </option>
@@ -84,13 +104,13 @@
 				</select>
 			</div>
 			<div>
-				<input type="text" id="datepicker">
-				<input type="text" id="fromTime">
-				<input type="text" id="toTime">
+				<input type="text" id="datepicker" autocomplete="off">
+				<input type="text" id="fromTime" autocomplete="off">
+				<input type="text" id="toTime" autocomplete="off">
 				
 				<input type="hidden" id="selectedDate" name="selectedDate">
-				<input type="hidden" id="fromTime" name="fromTime">
-				<input type="hidden" id="toTime" name="toTime">
+				<input type="hidden" id="parkInTime" name="parkInTime">
+				<input type="hidden" id="parkOutTime" name="parkOutTime">
 				<input type="submit" value="예약하기">
 			</div>
 		</form>
